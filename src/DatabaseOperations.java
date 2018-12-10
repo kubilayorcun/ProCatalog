@@ -5,10 +5,13 @@ public class DatabaseOperations {
     // Initialize global variables for global reference.
     private ResultSet selectResultSet;
     private Connection connection;
+    private ResultSet searchResultSet;
 
     // Default constructor. Establish connection at the time of object declaration.
     public DatabaseOperations(){
+
         connectToDatabase();
+
     }
 
 
@@ -93,6 +96,26 @@ public class DatabaseOperations {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // Searches specified table with the given searchKey under the given column::attributeName.
+    public ResultSet searchTable(String tableName, String attributeName, String searchKey){
+
+        // Searches for the 'alike' versions of searchKey string.
+        String searchQuery = "SELECT * FROM "+tableName+" WHERE "+attributeName+" LIKE '%"+searchKey+"%'";
+
+        try {
+
+            Statement searchStt = connection.createStatement();
+            searchResultSet = searchStt.executeQuery(searchQuery);
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return searchResultSet;
     }
 
 
