@@ -140,6 +140,17 @@ public class DatabaseOperations {
 
     }
 
+    // Delete specified table with respect to passed tableName param.
+    public void deleteTable(String tableName) throws SQLException {
+
+        String deleteTableQuery = "DROP TABLE IF EXISTS " + tableName;
+
+        Statement deleteStt = connection.createStatement();
+
+        deleteStt.executeUpdate(deleteTableQuery);
+
+    }
+
 
 
 
