@@ -119,4 +119,18 @@ public class DatabaseOperations {
     }
 
 
+    // Fetches tablename column data from master table of out database which holds database infrastructure information.
+    public ResultSet allCollections() throws SQLException {
+        String allCollectionsQuery = "SELECT name FROM sqlite_master WHERE type='table'";
+
+        Statement selectAllStt = connection.createStatement();
+
+        ResultSet allCollections = selectAllStt.executeQuery(allCollectionsQuery);
+
+        return allCollections;
+    }
+
+
+
+
 }
