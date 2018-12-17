@@ -119,4 +119,40 @@ public class DatabaseOperations {
     }
 
 
+    // Fetches tablename column data from master table of out database which holds database infrastructure information.
+    public ResultSet allTables() throws SQLException {
+        String allCollectionsQuery = "SELECT name FROM sqlite_master WHERE type='table'";
+
+        Statement selectAllStt = connection.createStatement();
+
+        ResultSet allCollections = selectAllStt.executeQuery(allCollectionsQuery);
+
+        return allCollections;
+    }
+
+    // Change specified table's name by passing parameters as 'oldTableName' , 'newTableName'.
+    public void editTableName(String oldTableName , String newTableName) throws SQLException {
+        String alterTableQuery = "ALTER TABLE " +oldTableName+ " RENAME TO "+ newTableName;
+
+        Statement alterStt = connection.createStatement();
+
+        alterStt.executeUpdate(alterTableQuery);
+
+    }
+
+    // Delete specified table with respect to passed tableName param.
+    public void deleteTable(String tableName) throws SQLException {
+
+        String deleteTableQuery = "DROP TABLE IF EXISTS " + tableName;
+
+        Statement deleteStt = connection.createStatement();
+
+        deleteStt.executeUpdate(deleteTableQuery);
+
+    }
+
+
+
+
+
 }
