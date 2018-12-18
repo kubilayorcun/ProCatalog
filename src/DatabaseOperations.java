@@ -63,10 +63,56 @@ public class DatabaseOperations {
         return selectResultSet;
     }
 
-    // Delete data dependant on id(primary_key) attribute of specific row.
-    public void deleteRowFromTable(String tableName, int id){
+    /** @param tableName specifies the table that is going to be updated by adding a new row.
+     *  @param values passing the values entered by the user for adding a new row with respect to them.
+     *  This method will provide the functionality for adding any values into any collection desired by the user.
+     *  [!!!] Insertion order of the passed arrayList before passing is crucial for this functionality to provide proper use.*/
+    public void addRow(String tableName, ArrayList<String> values) throws SQLException {
+        String getTableSql = "SELECT * FROM "+tableName+" LIMIT 0";
+        ArrayList<String> columnNames = new ArrayList<>();
+        columnNames.clear();
+        Statement stt = connection.createStatement();
+        ResultSet rs = stt.executeQuery(getTableSql);
+        ResultSetMetaData resultSetMetaData = rs.getMetaData();
+        int i = 2;
 
-        String deleteQuery = "DELETE FROM " +tableName+ " WHERE id = " + id;
+        // Fetch column names into colunmNames<> arrayList.
+        while (i <= resultSetMetaData.getColumnCount()){
+            columnNames.add(resultSetMetaData.getColumnName(i));
+            System.out.println(resultSetMetaData.getColumnName(i));
+            i++;
+        }
+
+        // Prepare necessary string for insertion fields.
+        String insertFields = "(";
+        for (String columnName: columnNames){
+            insertFields = insertFields + columnName + ",";
+        }
+        insertFields = insertFields.substring(0,insertFields.length()-1);
+        insertFields += ")";
+        System.out.println(insertFields);
+
+        // Prepare necessary string for specifying the values to be inserted to the above computed fields.
+        String insertValues="(";
+        for (String value : values){
+            insertValues += "'"+value + "',";
+        }
+        insertValues = insertValues.substring(0,insertValues.length()-1);
+        insertValues+=")";
+        System.out.println(insertValues);
+
+        String insertValuesQ = "INSERT INTO " +tableName+ " " +insertFields+ " VALUES "+insertValues;
+
+        System.out.println(insertValuesQ);
+        PreparedStatement ps = connection.prepareStatement(insertValuesQ);
+        ps.executeUpdate();
+
+    }
+
+    // Delete data dependant on id(primary_key) attribute of specific row.
+    public void deleteRowFromTable(String tableName, int id) {
+
+        String deleteQuery = "DELETE FROM " + tableName + " WHERE id = " + id;
 
         try {
 
@@ -79,14 +125,8 @@ public class DatabaseOperations {
 
     }
 
-    // Deleting choosen column from table, will be added.
-    public void deleteColumnFromTable(String tableName, String columnName){
-
-    }
-
-
     // Update table's data. (In our case, updates a collection's item's attribute.)
-    public void editDataFromTable(String tableName, int id, String columnChoice, String newValue){
+    public void editRowFromTable(String tableName, int id, String columnChoice, String newValue){
 
         // Ex: UPDATE books SET pageCount = 400 WHERE id = 37; (So the books table's 37th id'ed book's pagecount attribute will be updated to 400.)
         String editDataQuery = "UPDATE " +tableName+ " SET " +columnChoice+ " = " +newValue+ " WHERE id = " +id;
@@ -158,6 +198,12 @@ public class DatabaseOperations {
         Statement addColumnStt = connection.createStatement();
 
         addColumnStt.executeUpdate(addColumnQ);
+    }
+
+
+    // Deleting choosen column from table, will be added.
+    public void deleteColumnFromTable(String tableName, String columnName){
+
     }
 
     // Change specified table's name by passing parameters as 'oldTableName' , 'newTableName'.
