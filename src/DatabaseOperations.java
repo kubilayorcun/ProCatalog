@@ -133,9 +133,7 @@ public class DatabaseOperations {
 
     /** @param columnNames takes column names one by one from arrList and adds them in arraylist order to the table as columns.
      *  @param tableName takes table name and creates the table with specified name and a default primary key column.
-     *                  As a result collection will be created with desired columns and name.
-     *                  */
-    
+     *  As a result collection will be created with desired columns and name. */
     public void addTable(String tableName , ArrayList<String> columnNames) throws SQLException {
         String createCollectionQ = "CREATE TABLE IF NOT EXISTS " + tableName + " (id integer primary key );";
 
@@ -148,6 +146,18 @@ public class DatabaseOperations {
             ps.executeUpdate();
             i++;
         }
+    }
+
+
+    /** @param tableName specifies table which is going to be updated with addition of a new column.
+     *  @param columnName specifies column name that will be added to the table.
+     *  As a result when invoked this method updates the table and adds a new column. */
+    public void addColumnTable(String tableName, String columnName) throws SQLException {
+        String addColumnQ = "ALTER TABLE "+tableName+" ADD COLUMN "+columnName+" text";
+
+        Statement addColumnStt = connection.createStatement();
+
+        addColumnStt.executeUpdate(addColumnQ);
     }
 
     // Change specified table's name by passing parameters as 'oldTableName' , 'newTableName'.
