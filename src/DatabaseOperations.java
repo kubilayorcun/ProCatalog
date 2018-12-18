@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DatabaseOperations {
 
@@ -98,8 +99,8 @@ public class DatabaseOperations {
         }
     }
 
-    // Searches specified table with the given searchKey under the given column::attributeName.
-    public ResultSet searchTable(String tableName, String attributeName, String searchKey){
+    /**  This search method was for searching items in a collection, so it is not relevant anymore. Will be deleted at further commits. */
+    /*public ResultSet searchTable(String tableName, String attributeName, String searchKey){
 
         // Searches for the 'alike' versions of searchKey string.
         String searchQuery = "SELECT * FROM "+tableName+" WHERE "+attributeName+" LIKE '%"+searchKey+"%'";
@@ -116,7 +117,7 @@ public class DatabaseOperations {
         }
 
         return searchResultSet;
-    }
+    }*/
 
 
     // Fetches tablename column data from master table of out database which holds database infrastructure information.
@@ -128,6 +129,25 @@ public class DatabaseOperations {
         ResultSet allCollections = selectAllStt.executeQuery(allCollectionsQuery);
 
         return allCollections;
+    }
+
+    /** @param columnNames takes column names one by one from arrList and adds them in arraylist order to the table as columns.
+     *  @param tableName takes table name and creates the table with specified name and a default primary key column.
+     *                  As a result collection will be created with desired columns and name.
+     *                  */
+    
+    public void addTable(String tableName , ArrayList<String> columnNames) throws SQLException {
+        String createCollectionQ = "CREATE TABLE IF NOT EXISTS " + tableName + " (id integer primary key );";
+
+        Statement createCollectionStt = connection.createStatement();
+        createCollectionStt.execute(createCollectionQ);
+        int i = 0;
+        while(i < columnNames.size()){
+            String addColumnQ = "ALTER TABLE "+tableName+" ADD COLUMN "+columnNames.get(i)+" text";
+            PreparedStatement ps = connection.prepareStatement(addColumnQ);
+            ps.executeUpdate();
+            i++;
+        }
     }
 
     // Change specified table's name by passing parameters as 'oldTableName' , 'newTableName'.
