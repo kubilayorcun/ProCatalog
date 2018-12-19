@@ -16,7 +16,7 @@ public class DatabaseOperations {
     }
 
 
-    // Creating the connection to database
+    /** Create connection to database. */
     public void connectToDatabase(){
 
         String connectionUrl = "jdbc:sqlite:procatalog.db";
@@ -46,7 +46,9 @@ public class DatabaseOperations {
 
     }
 
-    // Fetching passed parameter 'tableName' referenced table data to resultSet
+    /** @param tableName specify the table to fetch data from.
+     *  @return resultSet which contains that specific table's data returned from query execution.
+     *  */
     public ResultSet selectFromTable(String tableName){
 
         String selectQuery = "SELECT * FROM "+ tableName;
@@ -109,7 +111,9 @@ public class DatabaseOperations {
 
     }
 
-    // Delete data dependant on id(primary_key) attribute of specific row.
+    /** @param tableName table to be edited.
+     *  @param id specify the row to be deleted by using id.
+     *  After invoked this method removes the specified row from specified table. */
     public void deleteRowFromTable(String tableName, int id) {
 
         String deleteQuery = "DELETE FROM " + tableName + " WHERE id = " + id;
@@ -125,7 +129,11 @@ public class DatabaseOperations {
 
     }
 
-    // Update table's data. (In our case, updates a collection's item's attribute.)
+    /** @param tableName table to be edited.
+     *  @param id to specify the column to be edited.
+     *  @param columnChoice which attribute of the item will be edited
+     *  @param newValue what is the new value that should be assigned to that specific row.
+     *  */
     public void editRowFromTable(String tableName, int id, String columnChoice, String newValue){
 
         // Ex: UPDATE books SET pageCount = 400 WHERE id = 37; (So the books table's 37th id'ed book's pagecount attribute will be updated to 400.)
@@ -139,28 +147,8 @@ public class DatabaseOperations {
         }
     }
 
-    /**  This search method was for searching items in a collection, so it is not relevant anymore. Will be deleted at further commits. */
-    /*public ResultSet searchTable(String tableName, String attributeName, String searchKey){
-
-        // Searches for the 'alike' versions of searchKey string.
-        String searchQuery = "SELECT * FROM "+tableName+" WHERE "+attributeName+" LIKE '%"+searchKey+"%'";
-
-        try {
-
-            Statement searchStt = connection.createStatement();
-            searchResultSet = searchStt.executeQuery(searchQuery);
-
-        } catch (SQLException e) {
-
-            e.printStackTrace();
-
-        }
-
-        return searchResultSet;
-    }*/
-
-
-    // Fetches tablename column data from master table of out database which holds database infrastructure information.
+    /** @return a resultSet containing names of tables (which are collections also).
+     *  Method provides the functionality of fetching all table names from database using master_table in the database which holds all tables info by default.  */
     public ResultSet allTables() throws SQLException {
         String allCollectionsQuery = "SELECT name FROM sqlite_master WHERE type='table'";
 
@@ -170,6 +158,7 @@ public class DatabaseOperations {
 
         return allCollections;
     }
+
 
     /** @param columnNames takes column names one by one from arrList and adds them in arraylist order to the table as columns.
      *  @param tableName takes table name and creates the table with specified name and a default primary key column.
@@ -206,7 +195,9 @@ public class DatabaseOperations {
 
     }
 
-    // Change specified table's name by passing parameters as 'oldTableName' , 'newTableName'.
+    /** @param oldTableName specify table to change the name
+     *  @param newTableName specify the new name to assign to the specified table.
+     *  After invoked this table will update the table's name with respect to specified parameters. */
     public void editTableName(String oldTableName , String newTableName) throws SQLException {
         String alterTableQuery = "ALTER TABLE " +oldTableName+ " RENAME TO "+ newTableName;
 
@@ -216,7 +207,8 @@ public class DatabaseOperations {
 
     }
 
-    // Delete specified table with respect to passed tableName param.
+    /** @param tableName specify the table to be deleted.
+     *  After invoked this method will drop a table from db and update db.*/
     public void deleteTable(String tableName) throws SQLException {
 
         String deleteTableQuery = "DROP TABLE IF EXISTS " + tableName;
