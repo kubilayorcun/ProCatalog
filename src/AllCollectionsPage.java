@@ -117,6 +117,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         else if (e.getSource().equals(deleteButton)){
             // DELETE BUTTON ACTION
         }
+        else if(e.getSource().equals(addCollectionButton)){
+            // ADD COLLECTION ACTION
+        }
 
     }
     public void populateDefaultListData() throws SQLException {
