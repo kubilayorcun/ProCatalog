@@ -10,8 +10,8 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
     private JTextField searchField;
     private DataList dataList;
     private DatabaseOperations databaseOperations;
-    private DefaultListModel listModel;
-    private JList allCollectionsList;
+    private DefaultListModel<String> listModel;
+
     public AllCollectionsPage() throws SQLException {
         super();
         setLayout(null);
@@ -22,9 +22,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         databaseOperations = new DatabaseOperations();
 
         // Creating list for all collections.
-        listModel = new DefaultListModel();
+        listModel = new DefaultListModel<>();
         populateDefaultListData();
-        allCollectionsList = new JList(listModel);
+        JList<String> allCollectionsList = new JList<>(listModel);
         JScrollPane scrollableList = new JScrollPane(allCollectionsList);
         scrollableList.setBounds(200 , 140 , 500, 260);
 
@@ -32,7 +32,7 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         searchField = new JTextField();
         searchField.setBounds(200 , 60 , 400 , 40);
 
-        // Creating search button for search invokation.
+        // Creating search button for search invocation.
         JButton searchButton = new JButton("Search");
         searchButton.setBounds(600,60,100,40);
         searchButton.addActionListener(this);
