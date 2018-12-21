@@ -22,7 +22,6 @@ public class DataList {
         while(result.next()) {
             String str = result.getString("name");
             // TODO: Delete before prod
-            System.out.println("Name = " + str);
             collections.add(str);
         }
         return(collections);
