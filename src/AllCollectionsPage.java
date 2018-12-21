@@ -1,5 +1,5 @@
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -11,6 +11,7 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
     private JTextField searchField;
     private DataList dataList;
     private DatabaseOperations databaseOperations;
+    private JList<String> allCollectionsList;
     private DefaultListModel<String> listModel;
     private JButton searchButton;
     private JButton viewButton;
@@ -27,9 +28,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         databaseOperations = new DatabaseOperations();
 
         // Creating list for all collections.
-        listModel = new DefaultListModel<String>();
+        listModel = new DefaultListModel<>();
         populateDefaultListData();
-        JList<String> allCollectionsList = new JList<String>(listModel);
+        allCollectionsList = new JList<>(listModel);
         JScrollPane scrollableList = new JScrollPane(allCollectionsList);
         scrollableList.setBounds(200 , 140 , 500, 260);
 
@@ -111,10 +112,23 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
             // VIEW BUTTON ACTION
         }
         else if(e.getSource().equals(editButton)){
-            // EDIT BUTTON ACTION
+            if(allCollectionsList.getSelectedIndex() != -1) {
+                String clickedName = allCollectionsList.getSelectedValue();
+                int clickedIndex = allCollectionsList.getSelectedIndex();
+                String newName = JOptionPane.showInputDialog(getRootPane(),
+                        "Please enter the new name:", "Edit Name", JOptionPane.INFORMATION_MESSAGE);
+                try {
+                    databaseOperations.editTableName(clickedName, newName);
+                    listModel.setElementAt(newName, clickedIndex);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(super.rootPane, "Please select an input." ,
+                        "Error" , JOptionPane.WARNING_MESSAGE);
+            }
         }
         else if (e.getSource().equals(deleteButton)){
-            // DELETE BUTTON ACTION
         }
         else if(e.getSource().equals(addCollectionButton)){
             // ADD COLLECTION ACTION
