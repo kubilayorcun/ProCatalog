@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -13,6 +14,10 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
     private DefaultListModel listModel;
     private JList allCollectionsList;
     private JButton searchButton;
+    private JButton viewButton;
+    private JButton editButton;
+    private JButton deleteButton;
+    private JButton addCollectionButton;
     public AllCollectionsPage() throws SQLException {
         super();
         setLayout(null);
@@ -38,6 +43,35 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         searchButton.setBounds(600,60,100,40);
         searchButton.addActionListener(this);
 
+        // Creating info button for showing collection general info. e.g columns and table name.
+        viewButton = new JButton("View");
+        viewButton.setBounds(240 , 420 , 100,40);
+        viewButton.addActionListener(this);
+
+        // Creating edit button for editing collection info. e.g editing collection's name, adding new column, deleting column.
+        editButton = new JButton("Edit");
+        editButton.setBounds(400 , 420 , 100 , 40);
+        editButton.addActionListener(this);
+
+        // Creating delete button for deleting selected collection.
+        deleteButton = new JButton("Delete");
+        deleteButton.setBounds(560 , 420 , 100 , 40);
+        deleteButton.addActionListener(this);
+
+        // Creating add collection button for adding new collection.
+        addCollectionButton = new JButton("+ Collection");
+        addCollectionButton.setBounds(340 , 500  , 220 , 40);
+
+        // Creating brand name label.
+        JLabel projectLabel = new JLabel("P  R  O  C  A  T  A  L  O  G");
+        projectLabel.setFont(new Font("Arial Black" , Font.PLAIN , 30));
+        projectLabel.setBounds(237 , 5 , 500 , 50);
+
+        add(projectLabel);
+        add(viewButton);
+        add(editButton);
+        add(deleteButton);
+        add(addCollectionButton);
         add(scrollableList);
         add(searchButton);
         add(searchField);
@@ -73,6 +107,15 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
                 }
 
             }
+        }
+        else if(e.getSource().equals(viewButton)){
+            // VIEW BUTTON ACTION
+        }
+        else if(e.getSource().equals(editButton)){
+            // EDIT BUTTON ACTION
+        }
+        else if (e.getSource().equals(deleteButton)){
+            // DELETE BUTTON ACTION
         }
 
     }
