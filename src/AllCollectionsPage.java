@@ -12,7 +12,6 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
     private DataList dataList;
     private DatabaseOperations databaseOperations;
     private DefaultListModel<String> listModel;
-    private JList allCollectionsList;
     private JButton searchButton;
     private JButton viewButton;
     private JButton editButton;
@@ -28,9 +27,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         databaseOperations = new DatabaseOperations();
 
         // Creating list for all collections.
-        listModel = new DefaultListModel<>();
+        listModel = new DefaultListModel<String>();
         populateDefaultListData();
-        JList<String> allCollectionsList = new JList<>(listModel);
+        JList<String> allCollectionsList = new JList<String>(listModel);
         JScrollPane scrollableList = new JScrollPane(allCollectionsList);
         scrollableList.setBounds(200 , 140 , 500, 260);
 
@@ -39,7 +38,7 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         searchField.setBounds(200 , 60 , 400 , 40);
 
         // Creating search button for search invocation.
-        JButton searchButton = new JButton("Search");
+        searchButton= new JButton("Search");
         searchButton.setBounds(600,60,100,40);
         searchButton.addActionListener(this);
 
