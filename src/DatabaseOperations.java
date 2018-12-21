@@ -219,6 +219,24 @@ public class DatabaseOperations {
 
     }
 
+    public ArrayList<String> tableColumns(String tableName) throws SQLException {
+        String getTableSql = "SELECT * FROM "+tableName+" LIMIT 0";
+        ArrayList<String> columnNames = new ArrayList<>();
+        columnNames.clear();
+        Statement stt = connection.createStatement();
+        ResultSet rs = stt.executeQuery(getTableSql);
+        ResultSetMetaData resultSetMetaData = rs.getMetaData();
+        int i = 2;
+
+        // Fetch column names into colunmNames<> arrayList.
+        while (i <= resultSetMetaData.getColumnCount()){
+            columnNames.add(resultSetMetaData.getColumnName(i));
+            System.out.println(resultSetMetaData.getColumnName(i));
+            i++;
+        }
+        return columnNames;
+    }
+
 
 
 
