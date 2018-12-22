@@ -164,7 +164,7 @@ public class DatabaseOperations {
      *  @param tableName takes table name and creates the table with specified name and a default primary key column.
      *  As a result collection will be created with desired columns and name. */
     public void addTable(String tableName , ArrayList<String> columnNames) throws SQLException {
-        String createCollectionQ = "CREATE TABLE IF NOT EXISTS " + tableName + " (id integer primary key );";
+        String createCollectionQ = "CREATE TABLE IF NOT EXISTS " + tableName + " (id integer primary key autoincrement);";
 
         Statement createCollectionStt = connection.createStatement();
         createCollectionStt.execute(createCollectionQ);

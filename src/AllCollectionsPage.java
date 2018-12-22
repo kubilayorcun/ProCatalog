@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class AllCollectionsPage extends CustomFrame implements ActionListener, TableModelListener {
     private ArrayList<String> allCollectionsArr;
@@ -183,13 +184,54 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                     }
 
                 });
+
+                addButton.addActionListener(e1 -> {
+                    ArrayList<JTextField> textFields = new ArrayList<>();
+                    ArrayList<String> newValues = new ArrayList<>();
+                    String[] labels;
+                    int numPairs;
+                    try {
+                        numPairs = databaseOperations.tableColumns(tableName).size();
+                        labels = new String[numPairs];
+                        for (int r = 0 ; r<numPairs; r++){
+                            labels[r] = databaseOperations.tableColumns(tableName).get(r);
+                        }
+                        GridLayout gridLayout = new GridLayout(0,2);
+                        JPanel p = new JPanel(gridLayout);
+                        for (int k = 0; k < numPairs; k++) {
+                            JLabel l = new JLabel(labels[k], JLabel.CENTER);
+                            if (!l.getText().equals("id")) {
+                                p.add(l);
+                                JTextField textField = new JTextField(10);
+                                textFields.add(textField);
+                                l.setLabelFor(textField);
+                                p.add(textField);
+                            }
+                        }
+
+                        int result = JOptionPane.showConfirmDialog(null , p , "New Item" , JOptionPane.OK_CANCEL_OPTION);
+                        if (result == JOptionPane.OK_OPTION){
+                            for (JTextField t : textFields){
+                                System.out.println(t.getText());
+                                newValues.add(t.getText());
+                            }
+                            databaseOperations.addRow(tableName , newValues);
+                        }
+
+                    } catch (SQLException e2) {
+                        e2.printStackTrace();
+                    }
+                });
+
+
+
+
                 buttonPanel.add(addButton);
                 buttonPanel.add(deleteButton);
                 viewPanel.add(buttonPanel, BorderLayout.SOUTH);
                 viewPanel.add(table.getTableHeader() , BorderLayout.PAGE_START);
                 viewPanel.add(table , BorderLayout.CENTER);
                 viewFrame.add(viewPanel);
-                //JOptionPane.showMessageDialog(getContentPane() , "You can edit the collection by double-clicking cells and then pressing enter.",);
                 table.setToolTipText("You can edit the cells by double-clicking and enter to finish.");
                 viewFrame.setVisible(true);
             } catch (SQLException e1) {
@@ -220,7 +262,6 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
         TableModel tempModel = (TableModel) e.getSource();
         int row = e.getFirstRow();
         int column = e.getColumn();
-
         String id = String.valueOf(tempModel.getValueAt(row  , 0));
         String newValue = String.valueOf(tempModel.getValueAt(row,column));
         String columnName = tempModel.getColumnName(column);
