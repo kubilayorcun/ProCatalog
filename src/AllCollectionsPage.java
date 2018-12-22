@@ -145,7 +145,47 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
             }
         }
         else if(e.getSource().equals(addCollectionButton)){
+            JTextField nameField = new JTextField(5);
+            JTextField numberField = new JTextField(5);
 
+            JPanel creatorPanel = new JPanel();
+            creatorPanel.add(new JLabel("Please enter the name of collection:"));
+            creatorPanel.add(nameField);
+            creatorPanel.add(new JLabel("Please enter the number of labels you want in collection:"));
+            creatorPanel.add(numberField);
+
+            int result = JOptionPane.showConfirmDialog(null, creatorPanel,
+                    "Collection Creator", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.CANCEL_OPTION) {
+                System.out.println("Exit");
+            } else if(nameField.getText().isEmpty() || numberField.getText().isEmpty()){
+                JOptionPane.showMessageDialog(super.rootPane, "Please fill all fields." ,
+                        "Error" , JOptionPane.WARNING_MESSAGE);
+            } else if(result == JOptionPane.OK_OPTION) {
+                int labelNumber = Integer.parseInt(numberField.getText());
+                ArrayList<String> labelArr = new ArrayList<>();
+                JTextField[] labels = new JTextField[labelNumber];
+
+                JPanel labelPanel = new JPanel();
+                labelPanel.add(new JLabel("Please enter the name of labels:"));
+                for (int i = 0; i < labelNumber; i++){
+                    labels[i] = new JTextField(5);
+                    labelPanel.add(labels[i]);
+                }
+                // Note: To be honest, I don't want to add more nested if statements so no more check.
+                JOptionPane.showConfirmDialog(null, labelPanel,
+                        "Collection Creator", JOptionPane.DEFAULT_OPTION);
+                for (int i = 0; i < labelNumber; i++){
+                    labelArr.add(labels[i].getText());
+                }
+                System.out.println(labelArr);
+                try {
+                    databaseOperations.addTable(nameField.getText(), labelArr);
+                    listModel.addElement(nameField.getText());
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
 
     }
