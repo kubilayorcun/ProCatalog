@@ -137,7 +137,7 @@ public class DatabaseOperations {
     public void editRowFromTable(String tableName, int id, String columnChoice, String newValue){
 
         // Ex: UPDATE books SET pageCount = 400 WHERE id = 37; (So the books table's 37th id'ed book's pagecount attribute will be updated to 400.)
-        String editDataQuery = "UPDATE " +tableName+ " SET " +columnChoice+ " = " +newValue+ " WHERE id = " +id;
+        String editDataQuery = "UPDATE " +"'"+tableName+"'"+ " SET " +"'"+columnChoice+"'"+ " = " +"'"+newValue+"'"+ " WHERE id = " +"'"+id+"'";
 
         try {
             PreparedStatement editStatement = connection.prepareStatement(editDataQuery);

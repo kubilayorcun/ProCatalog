@@ -1,3 +1,4 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -6,6 +7,8 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,8 +25,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
     private JButton editButton;
     private JButton deleteButton;
     private JButton addCollectionButton;
+    private String  tableName;
 
-    public AllCollectionsPage() throws SQLException {
+    public AllCollectionsPage() throws SQLException, IOException {
         super();
         setLayout(null);
 
@@ -72,6 +76,21 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
         projectLabel.setFont(new Font("Arial Black" , Font.PLAIN , 30));
         projectLabel.setBounds(237 , 5 , 500 , 50);
 
+        // Refresh button to load initial collections again manually.
+
+
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.setBounds(400,107,100,26);
+        refreshButton.addActionListener(e -> {
+            try {
+                populateDefaultListData();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+
+        add(refreshButton);
         add(projectLabel);
         add(viewButton);
         add(editButton);
@@ -119,8 +138,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
             viewFrame.setSize(500,500);
             viewPanel.setLayout(new BorderLayout());
 
-            String tableName = allCollectionsList.getSelectedValue().toString();
-            System.out.println(tableName);
+            tableName = allCollectionsList.getSelectedValue().toString();
+            viewFrame.setTitle(tableName);
+
             try {
                 int columnCount = databaseOperations.tableColumns(tableName).size();
                 int rowCount = databaseOperations.tableRowCount(tableName);
@@ -139,7 +159,6 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
 
                     for (int j= 0 ; j < columnCount; j++){
                         data[index][j] = tableData.getString(j+1);
-                        System.out.println(tableData.getString(j+1));
                     }
                     index++;
                 }
@@ -170,6 +189,8 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                 viewPanel.add(table.getTableHeader() , BorderLayout.PAGE_START);
                 viewPanel.add(table , BorderLayout.CENTER);
                 viewFrame.add(viewPanel);
+                //JOptionPane.showMessageDialog(getContentPane() , "You can edit the collection by double-clicking cells and then pressing enter.",);
+                table.setToolTipText("You can edit the cells by double-clicking and enter to finish.");
                 viewFrame.setVisible(true);
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -187,6 +208,7 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
 
     }
     public void populateDefaultListData() throws SQLException {
+        listModel.clear();
         ResultSet resultSet = databaseOperations.allTables();
         for (String collection : dataList.fillCollections(resultSet)){
             listModel.addElement(collection);
@@ -198,9 +220,10 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
         TableModel tempModel = (TableModel) e.getSource();
         int row = e.getFirstRow();
         int column = e.getColumn();
-//        String id = String.valueOf(tempModel.getValueAt(row  , 0));
-  //      System.out.println("id: "  + id);
-    //    System.out.println("row:" +row);
-      //  System.out.println("column : " + column);
+
+        String id = String.valueOf(tempModel.getValueAt(row  , 0));
+        String newValue = String.valueOf(tempModel.getValueAt(row,column));
+        String columnName = tempModel.getColumnName(column);
+        databaseOperations.editRowFromTable(tableName , Integer.parseInt(id),columnName,newValue);
     }
 }
