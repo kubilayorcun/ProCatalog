@@ -5,11 +5,8 @@ import java.util.HashMap;
 
 public class DataList {
 
-    private static ArrayList<String> additionalLabels = new ArrayList<>();
-
     /**
-     * This function will fill every result comes from CollectionAll
-     * to an ArrayList.
+     * This function will fill every result comes from CollectionAll to an ArrayList.
      * ResultSet example:
      * ResultSet result = statement.executeQuery("SELECT name FROM CollectionAll");
      * This function can also be used for storing all items in the collectionA.
@@ -21,15 +18,13 @@ public class DataList {
         ArrayList<String> collections = new ArrayList<>();
         while(result.next()) {
             String str = result.getString("name");
-            // TODO: Delete before prod
             collections.add(str);
         }
         return(collections);
     }
 
     /**
-     * This function will map every item label and its data to an
-     * HashMap.
+     * This function will map every item label and its data to a HashMap.
      * ResultSet example:
      * ResultSet result = statement.executeQuery("SELECT x, y, z FROM CollectionA");
      *
@@ -43,8 +38,6 @@ public class DataList {
         while(result.next()) {
             for(Object obj : arr) {
                 String str2 = result.getString((String) obj);
-                // TODO: Delete before prod
-                System.out.println(obj + str2);
                 currCollection.put((String) obj, str2);
             }
         }
@@ -52,7 +45,6 @@ public class DataList {
     }
 
     public static void main(String[] args) {
-
         // Simulation without DB
 
         // fillCollections
@@ -72,9 +64,5 @@ public class DataList {
         CD1.put("Name", "CD1");
         CD1.put("Date", "1997");
         System.out.println(CD1);
-
-        // TODO: Create a simulation after DB is completed
-
-
     }
 }
