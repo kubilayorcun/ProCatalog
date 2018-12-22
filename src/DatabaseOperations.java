@@ -226,15 +226,22 @@ public class DatabaseOperations {
         Statement stt = connection.createStatement();
         ResultSet rs = stt.executeQuery(getTableSql);
         ResultSetMetaData resultSetMetaData = rs.getMetaData();
-        int i = 2;
+        int i = 1;
 
         // Fetch column names into colunmNames<> arrayList.
         while (i <= resultSetMetaData.getColumnCount()){
             columnNames.add(resultSetMetaData.getColumnName(i));
-            System.out.println(resultSetMetaData.getColumnName(i));
+
             i++;
         }
         return columnNames;
+    }
+
+    public int tableRowCount(String tableName) throws SQLException {
+        String getTable = "SELECT count(*) FROM "+tableName;
+        Statement stt = connection.createStatement();
+        ResultSet resultSet = stt.executeQuery(getTable);
+        return resultSet.getInt(1);
     }
 
 

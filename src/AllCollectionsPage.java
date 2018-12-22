@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,7 +110,54 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
             }
         }
         else if(e.getSource().equals(viewButton)){
-            // VIEW BUTTON ACTION
+            JFrame viewFrame = new JFrame();
+            JPanel viewPanel = new JPanel();
+            viewFrame.setSize(500,500);
+            viewPanel.setLayout(new BorderLayout());
+
+            String tableName = allCollectionsList.getSelectedValue().toString();
+            System.out.println(tableName);
+            try {
+                int columnCount = databaseOperations.tableColumns(tableName).size();
+                int rowCount = databaseOperations.tableRowCount(tableName);
+
+                String[] columnNames = new String[columnCount];
+                int i = 0;
+                for(String s : databaseOperations.tableColumns(tableName)){
+                    columnNames[i] = s;
+                    i++;
+                }
+
+                String[][] data = new String[rowCount][columnCount];
+                ResultSet tableData = databaseOperations.selectFromTable(tableName);
+                int index = 0;
+                while(tableData.next()){
+
+                    for (int j= 0 ; j < columnCount; j++){
+                        data[index][j] = tableData.getString(j+1);
+                        System.out.println(tableData.getString(j+1));
+                    }
+                    index++;
+                }
+
+                JTable table = new JTable(data , columnNames);
+
+
+
+
+                JPanel buttonPanel = new JPanel(new FlowLayout());
+                JButton addButton = new JButton("[+] ADD");
+                JButton deleteButton = new JButton("[-] DELETE");
+                buttonPanel.add(addButton);
+                buttonPanel.add(deleteButton);
+                viewPanel.add(buttonPanel, BorderLayout.SOUTH);
+                viewPanel.add(table.getTableHeader() , BorderLayout.PAGE_START);
+                viewPanel.add(table , BorderLayout.CENTER);
+                viewFrame.add(viewPanel);
+                viewFrame.setVisible(true);
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
         else if(e.getSource().equals(editButton)){
             // EDIT BUTTON ACTION
