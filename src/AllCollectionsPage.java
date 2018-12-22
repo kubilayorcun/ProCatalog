@@ -1,5 +1,8 @@
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class AllCollectionsPage extends CustomFrame implements ActionListener {
+public class AllCollectionsPage extends CustomFrame implements ActionListener, TableModelListener {
     private ArrayList<String> allCollectionsArr;
     private JTextField searchField;
     private DataList dataList;
@@ -19,6 +22,7 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
     private JButton editButton;
     private JButton deleteButton;
     private JButton addCollectionButton;
+
     public AllCollectionsPage() throws SQLException {
         super();
         setLayout(null);
@@ -139,15 +143,27 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
                     }
                     index++;
                 }
-
-                JTable table = new JTable(data , columnNames);
-
+                DefaultTableModel defaultTableModel = new DefaultTableModel(data , columnNames);
+                JTable table = new JTable(defaultTableModel);
+                table.getModel().addTableModelListener(this);
 
 
 
                 JPanel buttonPanel = new JPanel(new FlowLayout());
                 JButton addButton = new JButton("[+] ADD");
                 JButton deleteButton = new JButton("[-] DELETE");
+                deleteButton.addActionListener(e12 -> {
+
+                    int option = JOptionPane.showConfirmDialog(null,"Are you sure ?", "Warning" , JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.YES_OPTION) {
+
+                    String id = String.valueOf(table.getModel().getValueAt(table.getSelectedRow(), 0 ));
+                    databaseOperations.deleteRowFromTable(tableName , Integer.parseInt(id));
+                        ((DefaultTableModel)table.getModel()).removeRow(table.getSelectedRow());
+
+                    }
+
+                });
                 buttonPanel.add(addButton);
                 buttonPanel.add(deleteButton);
                 viewPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -177,4 +193,14 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         }
     }
 
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        TableModel tempModel = (TableModel) e.getSource();
+        int row = e.getFirstRow();
+        int column = e.getColumn();
+//        String id = String.valueOf(tempModel.getValueAt(row  , 0));
+  //      System.out.println("id: "  + id);
+    //    System.out.println("row:" +row);
+      //  System.out.println("column : " + column);
+    }
 }
