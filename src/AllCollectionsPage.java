@@ -61,6 +61,7 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
         // Creating add collection button for adding new collection.
         addCollectionButton = new JButton("+ Collection");
         addCollectionButton.setBounds(340 , 500  , 220 , 40);
+        addCollectionButton.addActionListener(this);
 
         // Creating brand name label.
         JLabel projectLabel = new JLabel("P  R  O  C  A  T  A  L  O  G");
@@ -124,14 +125,27 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener {
                     e1.printStackTrace();
                 }
             } else {
-                JOptionPane.showMessageDialog(super.rootPane, "Please select an input." ,
+                JOptionPane.showMessageDialog(super.rootPane, "Please select a collection." ,
                         "Error" , JOptionPane.WARNING_MESSAGE);
             }
         }
         else if (e.getSource().equals(deleteButton)){
+            if(allCollectionsList.getSelectedIndex() != -1) {
+                int clickedIndex = allCollectionsList.getSelectedIndex();
+                String clickedCollection = allCollectionsList.getSelectedValue();
+                try {
+                    databaseOperations.deleteTable(clickedCollection);
+                    listModel.remove(clickedIndex);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(super.rootPane, "Please select a collection." ,
+                        "Error" , JOptionPane.WARNING_MESSAGE);
+            }
         }
         else if(e.getSource().equals(addCollectionButton)){
-            // ADD COLLECTION ACTION
+
         }
 
     }
