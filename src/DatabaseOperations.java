@@ -43,7 +43,8 @@ public class DatabaseOperations {
     /**
      *  @param tableName specify the table to fetch data from.
      *  @return resultSet which contains that specific table's data returned from query execution.
-     *  */
+     *  
+     */
     public ResultSet selectFromTable(String tableName){
 
         String selectQuery = "SELECT * FROM "+ tableName;
@@ -64,7 +65,8 @@ public class DatabaseOperations {
      *  @param tableName specifies the table that is going to be updated by adding a new row.
      *  @param values passing the values entered by the user for adding a new row with respect to them.
      *  This method will provide the functionality for adding any values into any collection desired by the user.
-     *  [!!!] Insertion order of the passed arrayList before passing is crucial for this functionality to provide proper use.*/
+     *  [!!!] Insertion order of the passed arrayList before passing is crucial for this functionality to provide proper use.
+     */
     public void addRow(String tableName, ArrayList<String> values) throws SQLException {
         String getTableSql = "SELECT * FROM "+tableName+" LIMIT 0";
         ArrayList<String> columnNames = new ArrayList<>();
@@ -109,7 +111,8 @@ public class DatabaseOperations {
 
     /** @param tableName table to be edited.
      *  @param id specify the row to be deleted by using id.
-     *  After invoked this method removes the specified row from specified table. */
+     *  After invoked this method removes the specified row from specified table.
+     */
     public void deleteRowFromTable(String tableName, int id) {
 
         String deleteQuery = "DELETE FROM " + tableName + " WHERE id = " + id;
@@ -130,10 +133,11 @@ public class DatabaseOperations {
      *  @param id to specify the column to be edited.
      *  @param columnChoice which attribute of the item will be edited
      *  @param newValue what is the new value that should be assigned to that specific row.
-     *  */
+     * 
+     */
     public void editRowFromTable(String tableName, int id, String columnChoice, String newValue){
-        // Ex: UPDATE books SET pageCount = 400 WHERE id = 37; (So the books table's 37th id'ed book's pageCount attribute will be updated to 400.)
-        String editDataQuery = "UPDATE " +tableName+ " SET " +columnChoice+ " = " +newValue+ " WHERE id = " +id;
+        // Ex: UPDATE books SET pageCount = 400 WHERE id = 37; (So the books table's 37th id'ed book's pagecount attribute will be updated to 400.)
+        String editDataQuery = "UPDATE " +"'"+tableName+"'"+ " SET " +"'"+columnChoice+"'"+ " = " +"'"+newValue+"'"+ " WHERE id = " +"'"+id+"'";
         try {
             PreparedStatement editStatement = connection.prepareStatement(editDataQuery);
             editStatement.executeUpdate();
@@ -144,7 +148,8 @@ public class DatabaseOperations {
 
     /**
      * @return a resultSet containing names of tables (which are collections also).
-     *  Method provides the functionality of fetching all table names from database using master_table in the database which holds all tables info by default.  */
+     *  Method provides the functionality of fetching all table names from database using master_table in the database which holds all tables info by default.  
+     */
     public ResultSet allTables() throws SQLException {
         String allCollectionsQuery = "SELECT name FROM sqlite_master WHERE type='table'";
 
@@ -159,9 +164,10 @@ public class DatabaseOperations {
     /**
      *  @param columnNames takes column names one by one from arrList and adds them in arrayList order to the table as columns.
      *  @param tableName takes table name and creates the table with specified name and a default primary key column.
-     *  As a result collection will be created with desired columns and name. */
+     *  As a result collection will be created with desired columns and name. 
+     */
     public void addTable(String tableName , ArrayList<String> columnNames) throws SQLException {
-        String createCollectionQ = "CREATE TABLE IF NOT EXISTS " + tableName + " (id integer primary key );";
+        String createCollectionQ = "CREATE TABLE IF NOT EXISTS " + tableName + " (id integer primary key autoincrement);";
 
         Statement createCollectionStt = connection.createStatement();
         createCollectionStt.execute(createCollectionQ);
@@ -178,7 +184,8 @@ public class DatabaseOperations {
     /**
      *  @param tableName specifies table which is going to be updated with addition of a new column.
      *  @param columnName specifies column name that will be added to the table.
-     *  As a result when invoked this method updates the table and adds a new column. */
+     *  As a result when invoked this method updates the table and adds a new column. 
+     */
     public void addColumnTable(String tableName, String columnName) throws SQLException {
         String addColumnQ = "ALTER TABLE "+tableName+" ADD COLUMN "+columnName+" text";
 
@@ -196,7 +203,8 @@ public class DatabaseOperations {
     /**
      *  @param oldTableName specify table to change the name
      *  @param newTableName specify the new name to assign to the specified table.
-     *  After invoked this table will update the table's name with respect to specified parameters. */
+     *  After invoked this table will update the table's name with respect to specified parameters. 
+     */
     public void editTableName(String oldTableName , String newTableName) throws SQLException {
         String alterTableQuery = "ALTER TABLE " +oldTableName+ " RENAME TO "+ newTableName;
 
@@ -208,7 +216,8 @@ public class DatabaseOperations {
 
     /**
      *  @param tableName specify the table to be deleted.
-     *  After invoked this method will drop a table from db and update db.*/
+     *  After invoked this method will drop a table from db and update db.
+     */
     public void deleteTable(String tableName) throws SQLException {
 
         String deleteTableQuery = "DROP TABLE IF EXISTS " + tableName;
@@ -226,15 +235,28 @@ public class DatabaseOperations {
         Statement stt = connection.createStatement();
         ResultSet rs = stt.executeQuery(getTableSql);
         ResultSetMetaData resultSetMetaData = rs.getMetaData();
-        int i = 2;
+        int i = 1;
 
         // Fetch column names into colunmNames<> arrayList.
         while (i <= resultSetMetaData.getColumnCount()){
             columnNames.add(resultSetMetaData.getColumnName(i));
-            System.out.println(resultSetMetaData.getColumnName(i));
+
             i++;
         }
         return columnNames;
+    }
+
+    public int tableRowCount(String tableName) throws SQLException {
+        String getTable = "SELECT count(*) FROM "+tableName;
+        Statement stt = connection.createStatement();
+        ResultSet resultSet = stt.executeQuery(getTable);
+        return resultSet.getInt(1);
+    }
+    public ResultSet lastRow(String tableName) throws SQLException{
+        String lastColumnQ = "SELECT * FROM "+tableName+" ORDER BY id DESC LIMIT 1";
+        Statement stt = connection.createStatement();
+        ResultSet resultSet = stt.executeQuery(lastColumnQ);
+        return resultSet;
     }
 
 
