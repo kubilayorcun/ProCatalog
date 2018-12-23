@@ -243,6 +243,12 @@ public class DatabaseOperations {
         ResultSet resultSet = stt.executeQuery(getTable);
         return resultSet.getInt(1);
     }
+    public ResultSet lastRow(String tableName) throws SQLException{
+        String lastColumnQ = "SELECT * FROM "+tableName+" ORDER BY id DESC LIMIT 1";
+        Statement stt = connection.createStatement();
+        ResultSet resultSet = stt.executeQuery(lastColumnQ);
+        return resultSet;
+    }
 
 
 

@@ -1,4 +1,3 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -7,7 +6,6 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,7 +38,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
         // Creating list for all collections.
         listModel = new DefaultListModel();
         populateDefaultListData();
+
         allCollectionsList = new JList(listModel);
+        allCollectionsList.setSelectedIndex(0);
         JScrollPane scrollableList = new JScrollPane(allCollectionsList);
         scrollableList.setBounds(200 , 140 , 500, 260);
 
@@ -208,14 +208,23 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                                 p.add(textField);
                             }
                         }
-
                         int result = JOptionPane.showConfirmDialog(null , p , "New Item" , JOptionPane.OK_CANCEL_OPTION);
                         if (result == JOptionPane.OK_OPTION){
                             for (JTextField t : textFields){
-                                System.out.println(t.getText());
                                 newValues.add(t.getText());
                             }
                             databaseOperations.addRow(tableName , newValues);
+                            Vector<String> vector = new Vector<>();
+                            ResultSet s = databaseOperations.lastRow("dummyTable");
+                            try {
+                                    for(int a = 1 ; a <= numPairs; a++){
+                                        vector.add(s.getString(a));
+                                    }
+                            } catch (SQLException e2) {
+                                e2.printStackTrace();
+                            }
+                            DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+                            tableModel.addRow(vector);
                         }
 
                     } catch (SQLException e2) {
@@ -253,7 +262,10 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
         listModel.clear();
         ResultSet resultSet = databaseOperations.allTables();
         for (String collection : dataList.fillCollections(resultSet)){
-            listModel.addElement(collection);
+            if (!collection.contains("sqlite")){
+                listModel.addElement(collection);
+            }
+
         }
     }
 
@@ -262,9 +274,12 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
         TableModel tempModel = (TableModel) e.getSource();
         int row = e.getFirstRow();
         int column = e.getColumn();
+
+        if (row >= 0 && column >= 0){
         String id = String.valueOf(tempModel.getValueAt(row  , 0));
         String newValue = String.valueOf(tempModel.getValueAt(row,column));
         String columnName = tempModel.getColumnName(column);
         databaseOperations.editRowFromTable(tableName , Integer.parseInt(id),columnName,newValue);
+        }
     }
 }
