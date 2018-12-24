@@ -1,5 +1,5 @@
 import javax.swing.*;
-import java.awt.Font;
+import java.awt.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -139,7 +139,7 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
             viewFrame.setSize(500,500);
             viewPanel.setLayout(new BorderLayout());
 
-            tableName = allCollectionsList.getSelectedValue().toString();
+            tableName = allCollectionsList.getSelectedValue();
             viewFrame.setTitle(tableName);
 
             try {
@@ -157,7 +157,6 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                 ResultSet tableData = databaseOperations.selectFromTable(tableName);
                 int index = 0;
                 while(tableData.next()){
-
                     for (int j= 0 ; j < columnCount; j++){
                         data[index][j] = tableData.getString(j+1);
                     }
@@ -167,22 +166,17 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                 JTable table = new JTable(defaultTableModel);
                 table.getModel().addTableModelListener(this);
 
-
-
                 JPanel buttonPanel = new JPanel(new FlowLayout());
                 JButton addButton = new JButton("[+] ADD");
                 JButton deleteButton = new JButton("[-] DELETE");
                 deleteButton.addActionListener(e12 -> {
-
                     int option = JOptionPane.showConfirmDialog(null,"Are you sure ?", "Warning" , JOptionPane.YES_NO_OPTION);
                     if (option == JOptionPane.YES_OPTION) {
 
                     String id = String.valueOf(table.getModel().getValueAt(table.getSelectedRow(), 0 ));
                     databaseOperations.deleteRowFromTable(tableName , Integer.parseInt(id));
                         ((DefaultTableModel)table.getModel()).removeRow(table.getSelectedRow());
-
                     }
-
                 });
 
                 addButton.addActionListener(e1 -> {
@@ -215,11 +209,11 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                             }
                             databaseOperations.addRow(tableName , newValues);
                             Vector<String> vector = new Vector<>();
-                            ResultSet s = databaseOperations.lastRow("dummyTable");
+                            ResultSet s = databaseOperations.lastRow(tableName);
                             try {
-                                    for(int a = 1 ; a <= numPairs; a++){
-                                        vector.add(s.getString(a));
-                                    }
+                                for(int a = 1 ; a <= numPairs; a++){
+                                    vector.add(s.getString(a));
+                                }
                             } catch (SQLException e2) {
                                 e2.printStackTrace();
                             }
@@ -231,9 +225,6 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                         e2.printStackTrace();
                     }
                 });
-
-
-
 
                 buttonPanel.add(addButton);
                 buttonPanel.add(deleteButton);
@@ -253,11 +244,16 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                 int clickedIndex = allCollectionsList.getSelectedIndex();
                 String newName = JOptionPane.showInputDialog(getRootPane(),
                         "Please enter the new name:", "Edit Name", JOptionPane.INFORMATION_MESSAGE);
-                try {
-                    databaseOperations.editTableName(clickedName, newName);
-                    listModel.setElementAt(newName, clickedIndex);
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
+                if(!newName.equals("")) {
+                    try {
+                        databaseOperations.editTableName(clickedName, newName);
+                        listModel.setElementAt(newName, clickedIndex);
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                }else {
+                    JOptionPane.showMessageDialog(super.rootPane, "Please give a new name." ,
+                            "Error" , JOptionPane.WARNING_MESSAGE);
                 }
             } else {
                 JOptionPane.showMessageDialog(super.rootPane, "Please select a collection." ,
@@ -291,8 +287,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
 
             int result = JOptionPane.showConfirmDialog(null, creatorPanel,
                     "Collection Creator", JOptionPane.OK_CANCEL_OPTION);
+            //noinspection StatementWithEmptyBody
             if (result == JOptionPane.CANCEL_OPTION) {
-                System.out.println("Exit");
+                // Cancel
             } else if(nameField.getText().isEmpty() || numberField.getText().isEmpty()){
                 JOptionPane.showMessageDialog(super.rootPane, "Please fill all fields." ,
                         "Error" , JOptionPane.WARNING_MESSAGE);
@@ -313,7 +310,6 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                 for (int i = 0; i < labelNumber; i++){
                     labelArr.add(labels[i].getText());
                 }
-                System.out.println(labelArr);
                 try {
                     databaseOperations.addTable(nameField.getText(), labelArr);
                     listModel.addElement(nameField.getText());
@@ -341,11 +337,14 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
         int row = e.getFirstRow();
         int column = e.getColumn();
 
-        if (row >= 0 && column >= 0){
-        String id = String.valueOf(tempModel.getValueAt(row  , 0));
-        String newValue = String.valueOf(tempModel.getValueAt(row,column));
-        String columnName = tempModel.getColumnName(column);
-        databaseOperations.editRowFromTable(tableName , Integer.parseInt(id),columnName,newValue);
+        if (row >= 0 && column >= 1){
+            String id = String.valueOf(tempModel.getValueAt(row  , 0));
+            String newValue = String.valueOf(tempModel.getValueAt(row,column));
+            String columnName = tempModel.getColumnName(column);
+            databaseOperations.editRowFromTable(tableName , Integer.parseInt(id),columnName,newValue);
+        }else {
+            JOptionPane.showMessageDialog(super.rootPane, "You can't change the id." ,
+                    "Error" , JOptionPane.WARNING_MESSAGE);
         }
     }
 }
