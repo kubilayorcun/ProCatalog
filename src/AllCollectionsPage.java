@@ -1,5 +1,5 @@
 import javax.swing.*;
-import java.awt.Font;
+import java.awt.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -139,7 +139,7 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
             viewFrame.setSize(500,500);
             viewPanel.setLayout(new BorderLayout());
 
-            tableName = allCollectionsList.getSelectedValue().toString();
+            tableName = allCollectionsList.getSelectedValue();
             viewFrame.setTitle(tableName);
 
             try {
@@ -253,11 +253,16 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                 int clickedIndex = allCollectionsList.getSelectedIndex();
                 String newName = JOptionPane.showInputDialog(getRootPane(),
                         "Please enter the new name:", "Edit Name", JOptionPane.INFORMATION_MESSAGE);
-                try {
-                    databaseOperations.editTableName(clickedName, newName);
-                    listModel.setElementAt(newName, clickedIndex);
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
+                if(!newName.equals("")) {
+                    try {
+                        databaseOperations.editTableName(clickedName, newName);
+                        listModel.setElementAt(newName, clickedIndex);
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                }else {
+                    JOptionPane.showMessageDialog(super.rootPane, "Please give a new name." ,
+                            "Error" , JOptionPane.WARNING_MESSAGE);
                 }
             } else {
                 JOptionPane.showMessageDialog(super.rootPane, "Please select a collection." ,
@@ -291,8 +296,9 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
 
             int result = JOptionPane.showConfirmDialog(null, creatorPanel,
                     "Collection Creator", JOptionPane.OK_CANCEL_OPTION);
+            //noinspection StatementWithEmptyBody
             if (result == JOptionPane.CANCEL_OPTION) {
-                System.out.println("Exit");
+                // Cancel
             } else if(nameField.getText().isEmpty() || numberField.getText().isEmpty()){
                 JOptionPane.showMessageDialog(super.rootPane, "Please fill all fields." ,
                         "Error" , JOptionPane.WARNING_MESSAGE);
@@ -313,7 +319,6 @@ public class AllCollectionsPage extends CustomFrame implements ActionListener, T
                 for (int i = 0; i < labelNumber; i++){
                     labelArr.add(labels[i].getText());
                 }
-                System.out.println(labelArr);
                 try {
                     databaseOperations.addTable(nameField.getText(), labelArr);
                     listModel.addElement(nameField.getText());
